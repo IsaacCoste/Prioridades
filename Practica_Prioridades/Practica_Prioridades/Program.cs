@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Practica_Prioridades.Components;
 using Practica_Prioridades.Models;
 using Practica_Prioridades.DAL;
+using Practica_Prioridades.BLL;
 
 namespace Practica_Prioridades
 {
@@ -12,6 +13,7 @@ namespace Practica_Prioridades
             var builder = WebApplication.CreateBuilder(args);
             var ConStr = builder.Configuration.GetConnectionString("ConStr");
             builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
+            builder.Services.AddScoped<PrioridadesBLL>();
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
