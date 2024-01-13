@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using Practica_Prioridades.Components;
+using Practica_Prioridades.Models;
+using Practica_Prioridades.DAL;
 
 namespace Practica_Prioridades
 {
@@ -7,6 +10,8 @@ namespace Practica_Prioridades
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var ConStr = builder.Configuration.GetConnectionString("ConStr");
+            builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
