@@ -8,7 +8,6 @@ namespace Practica_Prioridades.BLL
     public class PrioridadesBLL
     {
         private readonly Contexto _contexto;
-
         public PrioridadesBLL(Contexto contexto)
         {
             _contexto = contexto;
