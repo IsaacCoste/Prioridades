@@ -36,10 +36,10 @@ namespace Practica_Prioridades.BLL
         }
         public bool Eliminar(Prioridades prioridades)
         {
-            _contexto.Entry(prioridades).State = EntityState.Detached;
+            _contexto.Entry(prioridades).State = EntityState.Deleted;
             return _contexto.SaveChanges() > 0;
         }
-        public Prioridades? Burcar(int PrioridadId)
+        public Prioridades? Buscar(int PrioridadId)
         {
             return _contexto.Prioridades.Where(t => t.PrioridadId == PrioridadId).AsNoTracking().SingleOrDefault();
         }
