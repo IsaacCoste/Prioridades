@@ -6,21 +6,22 @@ namespace Practica_Prioridades.Models
     {
         [Key]
         public int ClienteId { get; set; }
+        [StringLength(30, ErrorMessage = "No Puede Exceder los 30 Caracteres")]
         [Required(ErrorMessage = "El campo Nombre es requerido")]
         public string? Nombre { get; set; }
-        
+        [StringLength(10, ErrorMessage = "No Puede Exceder los 10 Caracteres")]
         [Required(ErrorMessage = "El campo Telefono es requerido")]
         public int Telefono { get; set; }
-        
+        [StringLength(10, ErrorMessage = "No Puede Exceder los 10 Caracteres")]
         [Required(ErrorMessage = "El campo Celular es requerido")]
         public int Celular { get; set; }
-        
+        [StringLength(11, ErrorMessage = "No Puede Exceder los 11 Caracteres")]
         [Required(ErrorMessage = "El campo Rnc es requerido")]
         public int Rnc { get; set; }
-        
+        [StringLength(28, ErrorMessage = "No Puede Exceder los 28 Caracteres")]
         [Required(ErrorMessage = "El campo Email es requerido")]
         public string? Email { get; set; }
-        
+        [StringLength(60, ErrorMessage = "No Puede Exceder los 60 Caracteres")]
         [Required(ErrorMessage = "El campo Direccion es requerido")]
         public string? Dirección { get; set; }
     }

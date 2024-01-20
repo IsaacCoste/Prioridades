@@ -20,9 +20,10 @@ namespace Practica_Prioridades.BLL
 
         public async Task<bool> Modificar(Clientes clientes)
         {
-            _contexto.Update(clientes);
-            int modificado = await _contexto.SaveChangesAsync();
-            return modificado > 0;
+            var t = await _contexto.Clientes.FindAsync(clientes.ClienteId);
+            _contexto.Entry(t!).State = EntityState.Detached;
+            _contexto.Entry(clientes).State = EntityState.Modified;
+            return _contexto.SaveChanges() > 0;
         }
 
         public async Task<bool> Existe(int ClienteId)
