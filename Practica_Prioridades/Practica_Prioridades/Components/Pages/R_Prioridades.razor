@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <span>@Notification</span>
+    <p>@Notification</p>
 </EditForm>
 @code {
     [Parameter]
@@ -78,6 +78,8 @@
     public void Nuevo()
     {
         prioridades = new Prioridades();
+        Notification = string.Empty;
+        
     }
     public void Guardar()
     {
@@ -87,16 +89,16 @@
         }
         if (prioridadesBLL.Guardar(this.prioridades))
         {
+            Nuevo();
             Notification = "Se Guardo los datos correctamente";
-            this.Nuevo();
         }
     }
     public void Eliminar()
     {
         if (prioridadesBLL.Eliminar(this.prioridades))
         {
-            Notification = "Se Eliminaron los datos correctamente";
             Nuevo();
+            Notification = "Se Eliminaron los datos correctamente";
         }
     }
 }
