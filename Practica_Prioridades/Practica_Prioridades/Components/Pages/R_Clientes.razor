@@ -1,0 +1,165 @@
+﻿@page "/R_Clientes"
+@page "/R_Clientes/{ClienteId:int}"
+@using Practica_Prioridades.BLL
+@using Practica_Prioridades.Models
+@inject ClientesBLL clientesBLL
+@rendermode InteractiveServer
+@inject NotificationService notificacionService
+<PageTitle>Registro de Clientes</PageTitle>
+
+<EditForm Model="clientes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class=" card">
+
+        <div class="card-header">
+            <h1>Registro de Clientes</h1>
+            </div>
+            <div class="card-body">
+                <label>Id cliente:</label>
+                <div class="input-group">
+                    <InputNumber @bind-Value="clientes.ClienteId" class="id-input"></InputNumber>
+                    <button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
+                </div>
+                <div class="form-group">
+                    <label>Nombre:</label>
+                    <InputText @bind-Value="clientes.Nombre" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => clientes.Nombre)" />
+                    @if (HayNombre)
+                    {
+                        <p class="text-danger">Ya existe un cliente con este nombre.</p>
+                    }
+                </div>
+                <div class="col-6">
+                    <label>Telefono:</label>
+                    <InputText @bind-Value="clientes.Telefono" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => clientes.Telefono)" />
+                </div>
+                <div class="col-6">
+                    <label>Celular:</label>
+                    <InputText @bind-Value="clientes.Celular" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => clientes.Celular)" />
+                </div>
+                <div class="col-6">
+                    <label>Rnc:</label>
+                    <InputText @bind-Value="clientes.Rnc" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => clientes.Rnc)" />
+                    @if (HayRnc)
+                    {
+                        <p class="text-danger">Ya existe un cliente con este Rnc.</p>
+                    }
+                </div>
+                <div class="col-6">
+                    <label>Email:</label>
+                    <InputText @bind-Value="clientes.Email" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => clientes.Email)" />
+                </div>
+                <div class="col-6">
+                    <label>Direccion:</label>
+                    <InputText @bind-Value="clientes.Direccion" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => clientes.Direccion)" />
+                </div>
+            </div>
+        <div class=" card-footer">
+            <button type="button" class="btn btn-primary" @onclick="Nuevo">Nuevo <i class="oi oi-file" /></button>
+            <button class="btn btn-success">Guardar <i class="oi oi-document" /></button>
+            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
+        </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes clientes { get; set; } = new Clientes();
+
+    private bool HayNombre = false;
+    private bool HayRnc = false;
+
+    protected override void OnInitialized()
+    {
+        if (ClienteId > 0)
+        {
+            this.clientes.ClienteId = ClienteId;
+            this.Buscar();
+        }
+    }
+    public void Buscar()
+    {
+        var clienteEncontrado = clientesBLL.Buscar(clientes.ClienteId);
+        if (clienteEncontrado != null)
+        {
+            this.clientes = clienteEncontrado;
+        }
+        else
+        {
+            var mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "Cliente no encontrado",
+                Duration = 3000
+            };
+            notificacionService.Notify(mensaje);
+            Nuevo();
+        }
+    }
+    public bool Validar()
+    {
+        HayNombre = (clientesBLL.Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.ToLower()
+        && t.ClienteId != clientes.ClienteId).Any());
+        HayRnc = (clientesBLL.Listar(t => t.Rnc!.ToLower() == clientes.Rnc!.ToLower()
+        && t.ClienteId != clientes.ClienteId).Any());
+        return HayNombre || HayRnc;
+    }
+    public void Nuevo()
+    {
+        clientes = new Clientes();
+        HayNombre = false;
+        HayRnc = false;
+    }
+    public void Guardar()
+    {
+        if (Validar())
+        {
+          var mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = "Error",
+                Detail = "Ya existe un cliente con este nombre o Rnc",
+                Duration = 3000
+            };
+            notificacionService.Notify(mensaje);
+            return;
+        }
+        var guardo = clientesBLL.Guardar(this.clientes);
+        if (guardo)
+            {
+                Nuevo();
+                var mensaje = new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Success,
+                    Summary = "Guardado",
+                    Detail = "Se Guardo los datos correctamente",
+                    Duration = 3000
+                };
+                notificacionService.Notify(mensaje);
+            }
+    }
+    public void Eliminar()
+    {
+        if (clientesBLL.Eliminar(this.clientes))
+        {
+            Nuevo();
+            var mensaje = new NotificationMessage
+            {
+                Severity = NotificationSeverity.Warning,
+                Summary = "Eliminado",
+                Detail = "Se Eliminaron los datos correctamente",
+                Duration = 3000
+            };
+            notificacionService.Notify(mensaje);
+        }
+        Nuevo();
+    }
+
+}
