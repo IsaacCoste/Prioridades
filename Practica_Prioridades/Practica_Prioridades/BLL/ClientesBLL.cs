@@ -56,12 +56,12 @@ namespace Practica_Prioridades.BLL
                 .SingleOrDefaultAsync();
         }
 
-        public async Task<List<Clientes>> Listar(Expression<Func<Clientes, bool>> Criterio)
+        public List<Clientes> Listar(Expression<Func<Clientes, bool>> Criterio)
         {
-            return await _contexto.Clientes
+            return _contexto.Clientes
                 .Where(Criterio)
                 .AsNoTracking()
-                .ToListAsync();
+                .ToList();
         }
     }
 }
