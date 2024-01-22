@@ -1,10 +1,8 @@
-﻿@page "/R_Clientes"
-@page "/R_Clientes/{ClienteId:int}"
-@using Practica_Prioridades.BLL
-@using Practica_Prioridades.Models
+﻿@page "/RCliente"
+@page "/RCliente/{ClienteId:int}"
 @inject ClientesBLL clientesBLL
 @rendermode InteractiveServer
-@inject NotificationService notificacionService
+
 <PageTitle>Registro de Clientes</PageTitle>
 
 <EditForm Model="clientes" OnValidSubmit="Guardar">
@@ -64,14 +62,13 @@
             <button class="btn btn-success">Guardar <i class="oi oi-document" /></button>
             <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="oi oi-trash" /></button>
         </div>
-
+    </div>
 </EditForm>
 
 @code {
     [Parameter]
     public int ClienteId { get; set; }
     public Clientes clientes { get; set; } = new Clientes();
-
     private bool HayNombre = false;
     private bool HayRnc = false;
 
@@ -90,19 +87,7 @@
         {
             this.clientes = clienteEncontrado;
         }
-        else
-        {
-            var mensaje = new NotificationMessage
-            {
-                Severity = NotificationSeverity.Error,
-                Summary = "Error",
-                Detail = "Cliente no encontrado",
-                Duration = 3000
-            };
-            notificacionService.Notify(mensaje);
-            Nuevo();
         }
-    }
     public bool Validar()
     {
         HayNombre = (clientesBLL.Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.ToLower()
@@ -114,52 +99,32 @@
     public void Nuevo()
     {
         clientes = new Clientes();
-        HayNombre = false;
-        HayRnc = false;
     }
-    public void Guardar()
+    public async void Guardar()
     {
         if (Validar())
         {
-          var mensaje = new NotificationMessage
-            {
-                Severity = NotificationSeverity.Error,
-                Summary = "Error",
-                Detail = "Ya existe un cliente con este nombre o Rnc",
-                Duration = 3000
-            };
-            notificacionService.Notify(mensaje);
             return;
         }
-        var guardo = clientesBLL.Guardar(this.clientes);
-        if (guardo)
+        else
             {
+            if (clientes.ClienteId > 0)
+            {
+                await clientesBLL.Modificar(clientes);
+        }
+            else
+            {
+                await clientesBLL.Crear(clientes);
+            }
                 Nuevo();
-                var mensaje = new NotificationMessage
-                {
-                    Severity = NotificationSeverity.Success,
-                    Summary = "Guardado",
-                    Detail = "Se Guardo los datos correctamente",
-                    Duration = 3000
-                };
-                notificacionService.Notify(mensaje);
             }
     }
-    public void Eliminar()
+    public async void Eliminar()
     {
-        if (clientesBLL.Eliminar(this.clientes))
+        if (clientes.ClienteId > 0)
         {
+            await clientesBLL.Eliminar(clientes.ClienteId);
             Nuevo();
-            var mensaje = new NotificationMessage
-            {
-                Severity = NotificationSeverity.Warning,
-                Summary = "Eliminado",
-                Detail = "Se Eliminaron los datos correctamente",
-                Duration = 3000
-            };
-            notificacionService.Notify(mensaje);
         }
-        Nuevo();
     }
-
 }

@@ -23,6 +23,6 @@ namespace Practica_Prioridades.Models
         public string? Email { get; set; }
         [StringLength(60, ErrorMessage = "No Puede Exceder los 60 Caracteres")]
         [Required(ErrorMessage = "El campo Direccion es requerido")]
-        public string? Dirección { get; set; }
+        public string? Direccion { get; set; }
     }
 }

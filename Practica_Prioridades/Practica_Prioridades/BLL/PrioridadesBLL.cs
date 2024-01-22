@@ -45,7 +45,7 @@ namespace Practica_Prioridades.BLL
         }
         public List<Prioridades> Listar(Expression<Func<Prioridades, bool>> Criterio)
         {
-            return _contexto.Prioridades.Where(Criterio).AsNoTracking().ToList();
+            return _contexto.Prioridades.Where(Criterio).AsNoTracking().ToList()!;
         }
     }
 }

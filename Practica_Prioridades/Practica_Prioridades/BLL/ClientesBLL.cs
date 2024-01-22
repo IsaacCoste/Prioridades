@@ -63,6 +63,5 @@ namespace Practica_Prioridades.BLL
                 .AsNoTracking()
                 .ToListAsync();
         }
-
     }
 }
