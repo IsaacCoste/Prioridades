@@ -47,25 +47,25 @@
     public List<Clientes> ListClientes { get; set; } = new List<Clientes>();
     public int filtrar { get; set; }
 
-    protected override void OnInitialized()
+    protected async override void OnInitialized()
     {
-        ListClientes = clientesBLL.Listar(t => true);
+        ListClientes = await clientesBLL.Listar(t => true);
     }
 
-    public void Buscar()
+    public async void Buscar()
     {
         if (filtrar > 0)
         {
-            ListClientes = clientesBLL.Listar(t => t.ClienteId == filtrar);
+            ListClientes = await clientesBLL.Listar(t => t.ClienteId == filtrar);
         }
         else
         {
-            ListClientes = clientesBLL.Listar(t => true);
+            ListClientes = await clientesBLL.Listar(t => true);
         }
     }
 
-    public void Recargar()
+    public async void Recargar()
     {
-        ListClientes = clientesBLL.Listar(t => true);
+        ListClientes = await clientesBLL.Listar(t => true);
     }
 }

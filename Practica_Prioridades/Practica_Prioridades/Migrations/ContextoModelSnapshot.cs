@@ -34,7 +34,6 @@ namespace Practica_Prioridades.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(28)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombre")

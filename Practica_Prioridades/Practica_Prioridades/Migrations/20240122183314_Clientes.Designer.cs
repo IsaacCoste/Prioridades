@@ -10,7 +10,7 @@ using Practica_Prioridades.DAL;
 namespace Practica_Prioridades.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240122000153_Clientes")]
+    [Migration("20240122183314_Clientes")]
     partial class Clientes
     {
         /// <inheritdoc />
@@ -37,7 +37,6 @@ namespace Practica_Prioridades.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(28)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombre")

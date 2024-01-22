@@ -20,10 +20,8 @@ namespace Practica_Prioridades.BLL
 
         public async Task<bool> Modificar(Clientes clientes)
         {
-            var t = await _contexto.Clientes.FindAsync(clientes.ClienteId);
-            _contexto.Entry(t!).State = EntityState.Detached;
-            _contexto.Entry(clientes).State = EntityState.Modified;
-            return _contexto.SaveChanges() > 0;
+            _contexto.Update(clientes);
+            return await _contexto.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> Existe(int ClienteId)
@@ -56,12 +54,12 @@ namespace Practica_Prioridades.BLL
                 .SingleOrDefaultAsync();
         }
 
-        public List<Clientes> Listar(Expression<Func<Clientes, bool>> Criterio)
+        public async Task <List<Clientes>> Listar(Expression<Func<Clientes, bool>> Criterio)
         {
-            return _contexto.Clientes
+            return await _contexto.Clientes
                 .Where(Criterio)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
     }
 }

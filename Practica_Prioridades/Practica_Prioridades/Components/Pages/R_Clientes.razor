@@ -92,12 +92,14 @@
         }
         public async Task<bool> Validar()
         {
-            HayNombre = await Task.Run(() => clientesBLL.Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.ToLower() && t.ClienteId != clientes.ClienteId).Any());
-            HayRnc = await Task.Run(() => clientesBLL.Listar(t => t.Rnc!.ToLower() == clientes.Rnc!.ToLower() && t.ClienteId != clientes.ClienteId).Any());
+            var listaClientes = await clientesBLL.Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.ToLower() && t.ClienteId != clientes.ClienteId);
+            HayNombre = listaClientes.Any();
+
+            var listaClientesRnc = await clientesBLL.Listar(t => t.Rnc!.ToLower() == clientes.Rnc!.ToLower() && t.ClienteId != clientes.ClienteId);
+            HayRnc = listaClientesRnc.Any();
 
             return HayNombre || HayRnc;
         }
-
         public void Nuevo()
         {
             clientes = new Clientes();
@@ -108,18 +110,13 @@
             {
                 return;
             }
-            else
+            var guardo = await clientesBLL.Guardar(clientes);
+            if(guardo)
             {
-                if (clientes.ClienteId > 0)
-                {
-                    await clientesBLL.Modificar(clientes);
-                }
-                else
-                {
-                    await clientesBLL.Guardar(clientes);
-                }
-                Nuevo();
+            Nuevo();
+            Notification = "Se Guardo los datos correctamente";
             }
+            
         }
         public async void Eliminar()
         {
