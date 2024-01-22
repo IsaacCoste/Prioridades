@@ -1,7 +1,5 @@
-﻿@page "/R_Prioridades"
-@page "/R_Prioridades/{PrioridadId:int}"
-@using Practica_Prioridades.BLL
-@using Practica_Prioridades.Models
+﻿@page "/RPrioridades"
+@page "/RPrioridades/{PrioridadId:int}"
 @inject PrioridadesBLL prioridadesBLL
 @rendermode InteractiveServer
 
@@ -16,7 +14,7 @@
         <div class="card-body">
             <label>ID:</label>
             <div class="input-group">
-                <InputNumber @bind-Value="prioridades.PrioridadId" class="id-input"></InputNumber>
+                <InputNumber min="0" @bind-Value="prioridades.PrioridadId" class="id-input"></InputNumber>
                 <button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
             </div>
             <div>
@@ -41,7 +39,7 @@
         </div>
     </div>
 
-    <span>@Notification</span>
+    <p>@Notification</p>
 </EditForm>
 @code {
     [Parameter]
@@ -78,6 +76,8 @@
     public void Nuevo()
     {
         prioridades = new Prioridades();
+        Notification = string.Empty;
+        
     }
     public void Guardar()
     {
@@ -87,16 +87,16 @@
         }
         if (prioridadesBLL.Guardar(this.prioridades))
         {
+            Nuevo();
             Notification = "Se Guardo los datos correctamente";
-            this.Nuevo();
         }
     }
     public void Eliminar()
     {
         if (prioridadesBLL.Eliminar(this.prioridades))
         {
-            Notification = "Se Eliminaron los datos correctamente";
             Nuevo();
+            Notification = "Se Eliminaron los datos correctamente";
         }
     }
 }

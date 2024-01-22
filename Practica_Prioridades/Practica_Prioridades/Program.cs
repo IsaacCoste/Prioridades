@@ -14,6 +14,8 @@ namespace Practica_Prioridades
             var ConStr = builder.Configuration.GetConnectionString("ConStr");
             builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
             builder.Services.AddScoped<PrioridadesBLL>();
+            builder.Services.AddScoped<ClientesBLL>();
+
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
