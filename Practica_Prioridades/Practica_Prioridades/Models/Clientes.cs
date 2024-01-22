@@ -18,7 +18,7 @@ namespace Practica_Prioridades.Models
         [StringLength(11, ErrorMessage = "No Puede Exceder los 11 Caracteres")]
         [Required(ErrorMessage = "El campo Rnc es requerido")]
         public string? Rnc { get; set; }
-        [StringLength(28, ErrorMessage = "No Puede Exceder los 28 Caracteres")]
+        [EmailAddress(ErrorMessage = "El email no es valido")]
         [Required(ErrorMessage = "El campo Email es requerido")]
         public string? Email { get; set; }
         [StringLength(60, ErrorMessage = "No Puede Exceder los 60 Caracteres")]
