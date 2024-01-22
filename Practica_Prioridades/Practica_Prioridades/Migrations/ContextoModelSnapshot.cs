@@ -22,26 +22,35 @@ namespace Practica_Prioridades.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Celular")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Dirección")
+                    b.Property<string>("Celular")
                         .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(60)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasMaxLength(28)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
+                        .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Rnc")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Rnc")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("Telefono")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ClienteId");
 

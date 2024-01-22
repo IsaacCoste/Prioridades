@@ -16,6 +16,7 @@ namespace Practica_Prioridades
             builder.Services.AddScoped<PrioridadesBLL>();
             builder.Services.AddScoped<ClientesBLL>();
 
+
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();

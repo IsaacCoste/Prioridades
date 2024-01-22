@@ -11,13 +11,13 @@ namespace Practica_Prioridades.Models
         public string? Nombre { get; set; }
         [StringLength(10, ErrorMessage = "No Puede Exceder los 10 Caracteres")]
         [Required(ErrorMessage = "El campo Telefono es requerido")]
-        public int Telefono { get; set; }
+        public string? Telefono { get; set; }
         [StringLength(10, ErrorMessage = "No Puede Exceder los 10 Caracteres")]
         [Required(ErrorMessage = "El campo Celular es requerido")]
-        public int Celular { get; set; }
+        public string? Celular { get; set; }
         [StringLength(11, ErrorMessage = "No Puede Exceder los 11 Caracteres")]
         [Required(ErrorMessage = "El campo Rnc es requerido")]
-        public int Rnc { get; set; }
+        public string? Rnc { get; set; }
         [StringLength(28, ErrorMessage = "No Puede Exceder los 28 Caracteres")]
         [Required(ErrorMessage = "El campo Email es requerido")]
         public string? Email { get; set; }
