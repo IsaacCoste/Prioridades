@@ -1,0 +1,65 @@
+﻿@page "/sistemDelete"
+@page "/sistemDelete/{SistemasId:int}"
+@inject SistemasService sistemasService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@if (sistemas != null)
+{
+    <div class="card">
+        <div class="card-header">
+            <h1>Desea Eliminar Este Sistema!</h1>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Detalles de Sistemas</h5>
+            <dl class="row">
+                <dt class="col-sm-3">SistemaId:</dt>
+                <dd class="col-sm-9">@sistemas.SistemasId</dd>
+
+                <dt class="col-sm-3">Sistema:</dt>
+                <dd class="col-sm-9">@sistemas.SistemaNombre</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-lg-center">
+            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public int SistemasId { get; set; }
+    public Sistemas sistemas { get; set; } = new Sistemas();
+
+    protected override void OnInitialized()
+    {
+        if(SistemasId > 0)
+        {
+            this.sistemas.SistemasId = SistemasId;
+            this.Buscar();
+        }
+    }
+    public async void Buscar()
+    {
+        var sistemasEncontrado = await sistemasService.Buscar(sistemas.SistemasId);
+
+        if(sistemasEncontrado != null)
+        {
+            this.sistemas = sistemasEncontrado;
+        }
+    }
+    public async void Eliminar()
+    {
+        if(sistemas.SistemasId > 0)
+        {
+            await sistemasService.Eliminar(sistemas);
+            Volver();
+        }
+    }
+    public void Volver()
+    {
+        NavigationManager.NavigateTo("IndexSistem");
+    }
+}

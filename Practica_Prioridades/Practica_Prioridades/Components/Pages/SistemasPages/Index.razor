@@ -1,0 +1,64 @@
+﻿@page "/IndexSistem"
+@page "/IndexSistem/{SistemasId:int}"
+@inject SistemasService sistemasService
+
+<div class="card">
+    <div class="card-header">
+        <h1>Index Sistemas</h1>
+        <a href="/CreateSistemas" class="btn btn-secondary">Crear</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr bgcolor="#92C7CF">
+                        <th>Id</th>
+                        <th>Sistemas</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ListSistemas)
+                    {
+                        <tr>
+                            <td>@item.SistemasId</td>
+                            <td>@item.SistemaNombre</td>
+                            <td>
+                                <a href="/sistemEdit/@item.SistemasId" class="bi bi-journal-medical" style="font-size: 1.5em;"></a>
+                            </td>
+                            <td>
+                                <a href="/sistemDelete/@item.SistemasId" class="bi bi-trash" style="font-size: 1.5em;"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int SistemasId { get; set; }
+    public Sistemas sistemas { get; set; } = new Sistemas();
+    public List<Sistemas> ListSistemas { get; set; } = new List<Sistemas>();
+    public int filtrar { get; set; }
+
+    protected async override void OnInitialized()
+    {
+        ListSistemas = await sistemasService.Listar(t => true);
+        
+    }
+    public async void Buscar()
+    {
+        if (filtrar == 0)
+        {
+            ListSistemas = await sistemasService.Listar(t => true);
+        }
+        else
+        {
+            ListSistemas = await sistemasService.Listar(t => t.SistemasId == filtrar);
+        }
+    }
+}

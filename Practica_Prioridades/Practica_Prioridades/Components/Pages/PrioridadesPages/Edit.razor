@@ -73,11 +73,6 @@
 
         return Haydescripción;
     }
-    public void Nuevo()
-    {
-        prioridades = new Prioridades();
-        Notification = string.Empty;
-    }
     public async void Guardar()
     {
         if (await Validar())
@@ -87,17 +82,8 @@
         var guardo = await prioridadesService.Guardar(prioridades);
         if (guardo)
         {
-            Nuevo();
+            Volver();
             Notification = "Se Guardo los datos correctamente";
-        }
-    }
-    public async void Eliminar()
-    {
-        if (prioridades.PrioridadId > 0)
-        {
-            await prioridadesService.Eliminar(this.prioridades);
-            Nuevo();
-            Notification = "Se Eliminaron los datos correctamente";
         }
     }
     public void Volver()
