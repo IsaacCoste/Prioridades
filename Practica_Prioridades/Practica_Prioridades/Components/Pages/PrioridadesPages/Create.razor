@@ -1,0 +1,107 @@
+﻿@page "/RPrioridades"
+@page "/RPrioridades/{PrioridadId:int}"
+@inject PrioridadesService prioridadesService
+@rendermode InteractiveServer
+@inject NavigationManager navigationManager
+
+<PageTitle>Registro de Prioridades</PageTitle>
+
+<EditForm Model="prioridades" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h1>Registro de Prioridades</h1>
+        </div>
+        <div class="card-body">
+            <label>ID:</label>
+            <div class="input-group">
+                <InputNumber min="0" @bind-Value="prioridades.PrioridadId" class="id-input"></InputNumber>
+                <button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
+            </div>
+            <div class="col-6">
+                <label>Descripci&oacute;n:</label>
+                <InputText @bind-Value="prioridades.Descripción" class="form-control"></InputText>
+                <ValidationMessage For="@(() => prioridades.Descripción)" />
+                @if (Haydescripción)
+                {
+                    <p class="text-danger">Ya existe una Prioridad con esta descripción.</p>
+                }
+            </div>
+            <div class="col-6">
+                <label>Dias De Compromiso:</label>
+                <InputNumber min="0" @bind-Value="prioridades.DiasCompromiso" class="form-control"></InputNumber>
+                <ValidationMessage For="@(() => prioridades.DiasCompromiso)" />
+            </div>
+        </div>
+        <div class="card-footer text-lg-center">
+            <button type="submit" class="btn btn-success">Crear <i class="bi bi-floppy-fill" /></button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+        </div>
+    </div>
+
+    <p>@Notification</p>
+</EditForm>
+@code {
+    [Parameter]
+    public int PrioridadId { get; set; }
+    public Prioridades prioridades { get; set; } = new Prioridades();
+    private bool Haydescripción = false;
+
+    public string Notification { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if(PrioridadId > 0)
+        {
+            this.prioridades.PrioridadId = PrioridadId;
+            this.Buscar();
+        }
+    }
+    public async void Buscar()
+    {
+        var prioridadEncontrada = await prioridadesService.Buscar(prioridades.PrioridadId);
+
+        if (prioridadEncontrada != null)
+        {
+            this.prioridades = prioridadEncontrada;
+        }
+    }
+    public async Task<bool> Validar()
+    {
+        var listaprioridad = await prioridadesService.Listar(t => t.Descripción!.ToLower() == prioridades.Descripción!.ToLower() && t.PrioridadId != prioridades.PrioridadId);
+        Haydescripción = listaprioridad.Any();
+
+        return Haydescripción;
+    }
+    public void Nuevo()
+    {
+        prioridades = new Prioridades();
+        Notification = string.Empty;
+    }
+    public async void Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+        }
+        var guardo = await prioridadesService.Guardar(prioridades);
+        if (guardo)
+        {
+            Nuevo();
+            Notification = "Se Guardo los datos correctamente";
+        }
+    }
+    public async void Eliminar()
+    {
+        if (prioridades.PrioridadId > 0)
+        {
+            await prioridadesService.Eliminar(this.prioridades);
+            Nuevo();
+            Notification = "Se Eliminaron los datos correctamente";
+        }
+    }
+    public void Volver()
+    {
+        navigationManager.NavigateTo("CPrioridades");
+    }
+}
