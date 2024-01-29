@@ -15,6 +15,7 @@ namespace Practica_Prioridades
             builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
             builder.Services.AddScoped<PrioridadesService>();
             builder.Services.AddScoped<ClientesService>();
+            builder.Services.AddScoped<SistemasService>();
 
 
             // Add services to the container.
