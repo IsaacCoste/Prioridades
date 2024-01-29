@@ -1,0 +1,130 @@
+﻿@page "/ClienteEdit";
+@page "/ClienteEdit/{ClienteId:int}";
+@inject ClientesService clientesService;
+@inject NavigationManager navigationManager;
+@inject ClientesService clientesService
+@rendermode InteractiveServer
+
+<PageTitle>Edit Clientes</PageTitle>
+
+<EditForm Model="clientes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class=" card">
+        <div class="card-header">
+            <h1>Editar Cliente</h1>
+        </div>
+        <div class="card-body">
+            <label>Id cliente:</label>
+            <div class="input-group">
+                <InputNumber min="0" @bind-Value="clientes.ClienteId" class="id-input"></InputNumber>
+            </div>
+            <div class="col-3">
+                <label>Nombre:</label>
+                <InputText @bind-Value="clientes.Nombre" class="form-control"></InputText>
+                <ValidationMessage For="@(() => clientes.Nombre)" />
+                @if (HayNombre)
+                {
+                    <p class="text-danger">Ya existe un cliente con este nombre.</p>
+                }
+            </div>
+            <div class="col-3">
+                <label>Tel&eacute;fono:</label>
+                <InputText @bind-Value="clientes.Telefono" class="form-control"></InputText>
+                <ValidationMessage For="@(() => clientes.Telefono)" />
+            </div>
+            <div class="col-3">
+                <label>Celular:</label>
+                <InputText @bind-Value="clientes.Celular" class="form-control"></InputText>
+                <ValidationMessage For="@(() => clientes.Celular)" />
+            </div>
+            <div class="col-3">
+                <label>Rnc:</label>
+                <InputText @bind-Value="clientes.Rnc" class="form-control"></InputText>
+                <ValidationMessage For="@(() => clientes.Rnc)" />
+                @if (HayRnc)
+                {
+                    <p class="text-danger">Ya existe un cliente con este Rnc.</p>
+                }
+            </div>
+            <div class="col-3">
+                <label>Email:</label>
+                <InputText @bind-Value="clientes.Email" class="form-control"></InputText>
+                <ValidationMessage For="@(() => clientes.Email)" />
+            </div>
+            <div class="col-3">
+                <label>Direcci&oacute;n:</label>
+                <InputText @bind-Value="clientes.Direccion" class="form-control"></InputText>
+                <ValidationMessage For="@(() => clientes.Direccion)" />
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-success">Modificar <i class="bi bi-floppy-fill"></i></button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left"></i></button>
+        </div>
+
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes clientes { get; set; } = new Clientes();
+    private bool HayNombre = false;
+    private bool HayRnc = false;
+    public string Notification { get; set; } = string.Empty;
+
+
+    protected override void OnInitialized()
+    {
+        if (ClienteId > 0)
+        {
+            this.clientes.ClienteId = ClienteId;
+            this.Buscar();
+        }
+    }
+    public async void Buscar()
+    {
+        var clienteEncontrado = await clientesService.Buscar(clientes.ClienteId);
+
+        if (clienteEncontrado != null)
+        {
+            this.clientes = clienteEncontrado;
+        }
+    }
+    public async Task<bool> Validar()
+    {
+        var listaClientes = await clientesService.Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.ToLower() && t.ClienteId != clientes.ClienteId);
+        HayNombre = listaClientes.Any();
+
+        var listaClientesRnc = await clientesService.Listar(t => t.Rnc!.ToLower() == clientes.Rnc!.ToLower() && t.ClienteId != clientes.ClienteId);
+        HayRnc = listaClientesRnc.Any();
+
+        return HayNombre || HayRnc;
+    }
+    
+    public async void Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+        }
+        var guardo = await clientesService.Guardar(clientes);
+        if (guardo)
+        {
+            Notification = "Se Guardo los datos correctamente";
+        }
+
+    }
+    public async void Eliminar()
+    {
+        if (clientes.ClienteId > 0)
+        {
+            await clientesService.Eliminar(clientes);
+        }
+    }
+    public void Volver()
+    {
+        navigationManager.NavigateTo("CClientes");
+    }
+}
+
