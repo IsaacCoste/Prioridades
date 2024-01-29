@@ -1,0 +1,75 @@
+﻿@page "/CPrioridades"
+@page "/CPrioridades/{PrioridadId:int}"
+@inject PrioridadesService prioridadesService
+
+<div class="card">
+
+    <div class="card-header">
+        <h1>Index Prioridades</h1>
+        <a href="/RPrioridades" class="btn btn-secondary">Crear</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+
+            <table class="table table-striped table-hover">
+
+                <thead>
+                    <tr bgcolor="#92C7CF">
+                        <th>Id</th>
+                        <th>Descripci&oacute;n</th>
+                        <th>Dias Compromiso</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ListPrioridades)
+                    {
+                        <tr>
+                            <td>@item.PrioridadId</td>
+                            <td>@item.Descripción</td>
+                            <td>@item.DiasCompromiso</td>
+                            <td>
+                                <a href="/prioridadesEdit/@item.PrioridadId" class="bi bi-journal-medical " style="font-size: 1.5em;"></a>
+                            </td>
+                            <td>
+                                <a href="/prioridadesDelete/@item.PrioridadId" class="bi bi-trash " style="font-size: 1.5em;"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int PrioridadId { get; set; }
+    public Prioridades prioridades { get; set; } = new Prioridades();
+    public List<Prioridades> ListPrioridades { get; set; } = new List<Prioridades>();
+    public int filtrar { get; set; }
+
+    protected async override void OnInitialized()
+    {
+        ListPrioridades = await prioridadesService.Listar(t => true);
+        
+    }
+    public async void Buscar()
+    {
+        if (filtrar > 0)
+        {
+            ListPrioridades = await prioridadesService.Listar(t => t.PrioridadId == filtrar);
+        }
+        else
+        {
+            ListPrioridades = await prioridadesService.Listar(t => true);
+        }
+    }
+    public async void Recargar()
+    {
+        ListPrioridades = await prioridadesService.Listar(t => true);
+    }
+}
