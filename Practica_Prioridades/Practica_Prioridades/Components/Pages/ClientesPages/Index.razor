@@ -1,0 +1,93 @@
+﻿@page "/CClientes"
+@page "/CClientes/{ClienteId:int}"
+@inject ClientesService clientesService
+
+<div class="card">
+    <div class="card-header">
+        <h1>Index Clientes</h1>
+        <a href="/RClientes" class="btn btn-secondary">Crear</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr bgcolor="#92C7CF">
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Tel&eacute;fono</th>
+                        <th>Celular</th>
+                        <th>Rnc</th>
+                        <th>Email</th>
+                        <th>Direcci&oacute;n</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (ListClientes.Count > 0)
+                    {
+                        @foreach (var item in ListClientes)
+                        {
+                            <tr>
+                                <td>@item.ClienteId</td>
+                                <td>@item.Nombre</td>
+                                <td>@item.Telefono</td>
+                                <td>@item.Celular</td>
+                                <td>@item.Rnc</td>
+                                <td>@item.Email</td>
+                                <td>@item.Direccion</td>
+                                <td>
+                                    <a href="/ClienteEdit/@item.ClienteId" class="bi bi-journal-medical" style="font-size: 1.5em;"></a>
+                                </td>
+                                <td>
+                                    <a href="/ClienteDelete/@item.ClienteId" class="bi bi-trash" style="font-size: 1.5em;"></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">No hay clientes</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    
+    </div>
+    <div class="card-footer">
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes clientes { get; set; } = new Clientes();
+    public List<Clientes> ListClientes { get; set; } = new List<Clientes>();
+    public int filtrar { get; set; }
+
+    protected async override void OnInitialized()
+    {
+        ListClientes = await clientesService.Listar(t => true);
+    }
+
+    public async void Buscar()
+    {
+        if (filtrar > 0)
+        {
+            ListClientes = await clientesService.Listar(t => t.ClienteId == filtrar);
+        }
+        else
+        {
+            ListClientes = await clientesService.Listar(t => true);
+        }
+    }
+
+    public async void Recargar()
+    {
+        ListClientes = await clientesService.Listar(t => true);
+    }
+
+}
