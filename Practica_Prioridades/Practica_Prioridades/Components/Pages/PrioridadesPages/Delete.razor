@@ -1,0 +1,71 @@
+﻿@page "/prioridadesDelete";
+@page "/prioridadesDelete/{PrioridadId:int}";
+@inject PrioridadesService prioridadesService;
+@inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
+@if (prioridades != null)
+{
+    <div class="card">
+        <div class="card-header">
+            <h1>Desea Eliminar Esta Prioridad!</h1>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Detalles de Prioridad</h5>
+            <dl class="row">
+                <dt class="col-sm-3">PrioridadId:</dt>
+                <dd class="col-sm-9">@prioridades.PrioridadId</dd>
+
+                <dt class="col-sm-3">Descripción:</dt>
+                <dd class="col-sm-9">@prioridades.Descripción</dd>
+
+                <dt class="col-sm-3">Días Compromiso:</dt>
+                <dd class="col-sm-9">@prioridades.DiasCompromiso</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-lg-center">
+            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+        </div>
+
+    </div>
+}   
+
+@code {
+    [Parameter]
+    public int PrioridadId { get; set; }
+    public Prioridades prioridades { get; set; } = new Prioridades();
+    private bool Haydescripción = false;
+
+    public string Notification { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (PrioridadId > 0)
+        {
+            this.prioridades.PrioridadId = PrioridadId;
+            this.Buscar();
+        }
+    }
+    public async void Buscar()
+    {
+        var prioridadEncontrada = await prioridadesService.Buscar(prioridades.PrioridadId);
+
+        if (prioridadEncontrada != null)
+        {
+            this.prioridades = prioridadEncontrada;
+        }
+    }
+    public async void Eliminar()
+    {
+        if (prioridades.PrioridadId > 0)
+        {
+            await prioridadesService.Eliminar(this.prioridades);
+            Notification = "Se Eliminaron los datos correctamente";
+        }
+    }
+    public void Volver()
+    {
+        navigationManager.NavigateTo("CPrioridades");
+    }
+}
