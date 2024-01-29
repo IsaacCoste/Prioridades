@@ -1,0 +1,80 @@
+﻿@page "/ClienteDelete";
+@page "/ClienteDelete/{ClienteId:int}";
+@inject ClientesService clientesService;
+@inject NavigationManager navigationManager;
+@rendermode InteractiveServer
+
+
+
+<div class="card">
+    <div class="card-header">
+        <h1>Desea Eliminar Este Cliente!</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Detalles de Cliente</h5>
+        <dl class="row">
+            <dt class="col-sm-3">ClienteId:</dt>
+            <dd class="col-sm-9">@clientes.ClienteId</dd>
+
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">@clientes.Nombre</dd>
+
+            <dt class="col-sm-3">Telefono:</dt>
+            <dd class="col-sm-9">@clientes.Telefono</dd>
+
+            <dt class="col-sm-3">Celular:</dt>
+            <dd class="col-sm-9">@clientes.Celular</dd>
+
+            <dt class="col-sm-3">Rnc:</dt>
+            <dd class="col-sm-9">@clientes.Rnc</dd>
+
+            <dt class="col-sm-3">Email:</dt>
+            <dd class="col-sm-9">@clientes.Email</dd>
+
+            <dt class="col-sm-3">Direccion:</dt>
+            <dd class="col-sm-9">@clientes.Direccion</dd>
+
+        </dl>
+    </div>
+    <div class="card-footer text-lg-center">
+        <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Volver ">Volver <i class="bi bi-arrow-return-left" /></button>
+
+    </div>
+</div>
+
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes clientes { get; set; } = new Clientes();
+
+    protected override void OnInitialized()
+    {
+        if (ClienteId > 0)
+        {
+            this.clientes.ClienteId = ClienteId;
+            Buscar();
+        }
+    }
+    public async void Buscar()
+    {
+        var clienteEncontrado = await clientesService.Buscar(clientes.ClienteId);
+        if (clienteEncontrado != null)
+        {
+            this.clientes = clienteEncontrado;
+        }
+    }
+    public async void Eliminar()
+    {
+        if (clientes.ClienteId > 0)
+        {
+            await clientesService.Eliminar(this.clientes);
+            Volver();
+        }
+    }
+    public void Volver()
+    {
+        navigationManager.NavigateTo("CClientes");
+    }
+}
