@@ -4,8 +4,6 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-@if (sistemas != null)
-{
     <div class="card">
         <div class="card-header">
             <h1>Desea Eliminar Este Sistema!</h1>
@@ -21,11 +19,11 @@
             </dl>
         </div>
         <div class="card-footer text-lg-center">
-            <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar</button>
+        <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="bi bi-trash3" /></button>
             <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
         </div>
     </div>
-}
+
 
 
 @code {
@@ -50,7 +48,7 @@
             this.sistemas = sistemasEncontrado;
         }
     }
-    public async void Eliminar()
+    public async Task Eliminar()
     {
         if(sistemas.SistemasId > 0)
         {
