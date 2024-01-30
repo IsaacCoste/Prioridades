@@ -8,90 +8,69 @@
 
 <EditForm Model="sistemas" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
-
     <div class="card">
-
         <div class="card-header">
-
             <h1>Registro de Sistemas</h1>
-            
         </div>
-
         <div class="card-body">
-
             <label>ID:</label>
-
             <div class="input-group">
-
                 <InputNumber min="0" @bind-Value="sistemas.SistemasId" class="id-input"></InputNumber>
-
                 <button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
-
             </div>
-
             <div class="col-6">
-
                 <label>Sistema:</label>
-
                 <InputText @bind-Value="sistemas.SistemaNombre" class="form-control"></InputText>
-
                 <ValidationMessage For="@(() => sistemas.SistemaNombre)" />
-
                 @if (HaySistemaNombre)
                 {
                     <p class="text-danger">Ya existe un Sistema con este nombre.</p>
                 }
             </div>
-
         </div>
-
         <div class="card-footer text-lg-center">
-
             <button type="submit" class="btn btn-success">Crear <i class="bi bi-floppy-fill" /></button>
-
             <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
-
         </div>
 
     </div>
 </EditForm>
-    <p>@Notification</p>
+<p>@Notification</p>
 
-    @code {
-        [Parameter]
-        public int SistemasId { get; set; }
-        public Sistemas sistemas { get; set; } = new Sistemas();
-        private bool HaySistema = false;
-        private bool HaySistemaNombre = false;
+@code {
+    [Parameter]
+    public int SistemasId { get; set; }
+    public Sistemas sistemas { get; set; } = new Sistemas();
+    private bool HaySistemaNombre = false;
 
-        public string Notification { get; set; } = string.Empty;
+    public string Notification { get; set; } = string.Empty;
 
-        protected override void OnInitialized()
-        {
+    protected override void OnInitialized()
+    {
         if (SistemasId > 0)
         {
             this.sistemas.SistemasId = SistemasId;
             this.Buscar();
         }
-        }
-        public async void Buscar()
-        {
+    }
+    public async void Buscar()
+    {
         var sistemasEncontrado = await sistemasService.Buscar(sistemas.SistemasId);
 
         if (sistemasEncontrado != null)
         {
             this.sistemas = sistemasEncontrado;
         }
-        }
-        public async Task<bool> Validar()
-        {
+    }
+    public async Task<bool> Validar()
+    {
         var listaSistemas = await sistemasService.Listar(t => t.SistemaNombre!.ToLower() == sistemas.SistemaNombre!.ToLower() && t.SistemasId != sistemas.SistemasId);
         HaySistemaNombre = listaSistemas.Any();
 
         return HaySistemaNombre;
-        }
-        public async void Guardar()
-        {
+    }
+    public async void Guardar()
+    {
         if (await Validar())
         {
             return;
@@ -102,9 +81,9 @@
             Volver();
             Notification = "Se Guardo los datos correctamente";
         }
-        }
-        public void Volver()
-        {
-        NavigationManager.NavigateTo("IndexSistem");
-        }
     }
+    public void Volver()
+    {
+        NavigationManager.NavigateTo("IndexSistem");
+    }
+}
