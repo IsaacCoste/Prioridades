@@ -16,6 +16,7 @@ namespace Practica_Prioridades
             builder.Services.AddScoped<PrioridadesService>();
             builder.Services.AddScoped<ClientesService>();
             builder.Services.AddScoped<SistemasService>();
+            builder.Services.AddScoped<TicketsService>();
 
 
             // Add services to the container.
