@@ -17,18 +17,15 @@ namespace Practica_Prioridades.Services
             _contexto.Clientes.Add(clientes);
             return await _contexto.SaveChangesAsync() > 0;
         }
-
         public async Task<bool> Modificar(Clientes clientes)
         {
             _contexto.Update(clientes);
             return await _contexto.SaveChangesAsync() > 0;
         }
-
         public async Task<bool> Existe(int ClienteId)
         {
             return await _contexto.Clientes.AnyAsync(t => t.ClienteId == ClienteId);
         }
-
         public async Task<bool> Guardar(Clientes clientes)
         {
             if (!await Existe(clientes.ClienteId))
@@ -36,7 +33,6 @@ namespace Practica_Prioridades.Services
             else
                 return await Modificar(clientes);
         }
-
         public async Task<bool> Eliminar(Clientes clientes)
         {
             var cantidad = await _contexto.Clientes
@@ -45,7 +41,6 @@ namespace Practica_Prioridades.Services
 
             return cantidad > 0;
         }
-
         public async Task<Clientes?> Buscar(int ClienteId)
         {
             return await _contexto.Clientes
@@ -53,14 +48,12 @@ namespace Practica_Prioridades.Services
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
         }
-
-        public async Task <List<Clientes>> Listar(Expression<Func<Clientes, bool>> Criterio)
+        public async Task<List<Clientes>> Listar(Expression<Func<Clientes, bool>> Criterio)
         {
             return await _contexto.Clientes
                 .Where(Criterio)
                 .AsNoTracking()
                 .ToListAsync();
         }
-
     }
 }
