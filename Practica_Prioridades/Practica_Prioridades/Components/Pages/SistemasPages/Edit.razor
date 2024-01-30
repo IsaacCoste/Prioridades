@@ -33,6 +33,7 @@
             <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
         </div>
     </div>
+
 </EditForm>
 @code {
     [Parameter]
@@ -63,10 +64,6 @@
         var Listasistemas = await sistemasService.Listar(t => t.SistemaNombre!.ToLower() == sistemas.SistemaNombre!.ToLower() && t.SistemasId != sistemas.SistemasId);
         HaySistemaNombre = Listasistemas.Any();
         return HaySistemaNombre;
-    }
-    public void Nuevo()
-    {
-        sistemas = new Sistemas();
     }
     public async Task Guardar()
     {
