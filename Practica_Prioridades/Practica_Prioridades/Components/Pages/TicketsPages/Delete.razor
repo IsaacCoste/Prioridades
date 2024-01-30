@@ -1,0 +1,80 @@
+﻿@page "/d"
+@page "/d/{TicketId:int}"
+@inject TicketsService ticketsService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<div class="card">
+    <div class="card-header">
+        <h1>Desea Eliminar Este Ticket?</h1>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">Detalles de Tickets</h5>
+        <dl class="row">
+            <dt class="col-sm-3">TicketId:</dt>
+            <dd class="col-sm-9">@tickets.TicketId</dd>
+
+            <dt class="col-sm-3">Fecha:</dt>
+            <dd class="col-sm-9">@tickets.Fecha.ToString("dd/mm/yyyy")</dd>
+
+            <dt class="col-sm-3">ClienteId:</dt>
+            <dd class="col-sm-9">@tickets.ClienteId</dd>
+
+            <dt class="col-sm-3">SistemaId:</dt>
+            <dd class="col-sm-9">@tickets.SistemaId</dd>
+
+            <dt class="col-sm-3">PrioridadId:</dt>
+            <dd class="col-sm-9">@tickets.PrioridadId</dd>
+
+            <dt class="col-sm-3">SolicitadoPor:</dt>
+            <dd class="col-sm-9">@tickets.SolicitadoPor</dd>
+
+            <dt class="col-sm-3">Asunto:</dt>
+            <dd class="col-sm-9">@tickets.Asunto</dd>
+
+            <dt class="col-sm-3">Descripci&oacute;n:</dt>
+            <dd class="col-sm-9">@tickets.Descripcion</dd>
+
+        </dl>
+    </div>
+    <div class="card-footer text-lg-center">
+        <button type="button" class="btn btn-danger" @onclick="Eliminar">Eliminar <i class="bi bi-trash3" /></button>
+        <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public Tickets tickets { get; set; } = new Tickets();
+
+    protected override void OnInitialized()
+    {
+        if (TicketId > 0)
+        {
+            this.tickets.TicketId = TicketId;
+            this.Buscar();
+        }
+    }
+    public async void Buscar()
+    {
+        var ticketsEncontrado = await ticketsService.Buscar(tickets.TicketId);
+
+        if (ticketsEncontrado != null)
+        {
+            this.tickets = ticketsEncontrado;
+        }
+    }
+    public async void Eliminar()
+    {
+        if (tickets.TicketId > 0)
+        {
+            await ticketsService.Eliminar(tickets);
+            Volver();
+        }
+    }
+    public void Volver()
+    {
+        NavigationManager.NavigateTo("/IndexTickets");
+    }
+}
