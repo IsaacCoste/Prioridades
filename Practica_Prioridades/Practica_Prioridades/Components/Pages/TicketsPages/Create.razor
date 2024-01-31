@@ -1,0 +1,141 @@
+﻿@page "/CreateTickets"
+@page "/CreateTickets/{TicketId:int}"
+@inject TicketsService ticketsService
+@inject SistemasService sistemasService
+@inject PrioridadesService prioridadesService
+@inject ClientesService clientesService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Tickets</PageTitle>
+<EditForm Model="Tickets" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h1>Crear Tickets</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Ticket Id:</label>
+                    <div class="input-group">
+                        <InputNumber min="0" @bind-Value="Tickets.TicketId" class="id-input"></InputNumber>
+                    </div>
+                    <ValidationMessage For="@(() => Tickets.TicketId)" />
+                </div>
+                <div class="col-md-3">
+                    <label>Fecha:</label>
+                    <InputDate @bind-Value="Tickets.Fecha" class="form-control"></InputDate>
+                    <ValidationMessage For="@(() => Tickets.Fecha)" />
+                </div>
+                <div class="col-md-3">
+                    <label>Cliente Id:</label>
+                    <InputSelect @bind-Value="Tickets.ClienteId" class="form-control">
+                        <option value="0">Seleccione el clienteId</option>
+                        @foreach (var item in ListClientes)
+                        {
+                            <option value="@item.ClienteId">@item.ClienteId</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Tickets.ClienteId)" />
+                </div>
+                <div class="col-md-3">
+                    <label>Sistema Id:</label>
+                    <InputSelect @bind-Value="Tickets.SistemaId" class="form-control">
+                        <option value="0">Seleccione un sistema</option>
+                        @foreach (var item in ListSistemas)
+                        {
+                            <option value="@item.SistemasId">@item.SistemaNombre</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Tickets.SistemaId)" />
+                </div>
+                <div class="col-md-3">
+                    <label>Prioridad Id:</label>
+                    <InputSelect @bind-Value="Tickets.PrioridadId" class="form-control">
+                        <option value="0">Seleccione una prioridad</option>
+                        @foreach (var item in ListPrioridades)
+                        {
+                            <option value="@item.PrioridadId">@item.PrioridadId</option>
+                        }
+                    </InputSelect>
+                    <ValidationMessage For="@(() => Tickets.PrioridadId)" />
+                </div>
+                <div class="col-md-3">
+                    <label>Solicitado por:</label>
+                    <InputText @bind-Value="Tickets.SolicitadoPor" class="form-control"></InputText>
+                    <ValidationMessage For="@(() => Tickets.SolicitadoPor)" />
+                </div>
+                <div class="col-6">
+                    <label>Asunto:</label>
+                    <InputText @bind-Value="Tickets.Asunto" class="form-control"></InputText>
+                </div>
+                <div class="col-6">
+                    <label>Descripci&oacute;n:</label>
+                    <InputText @bind-Value="Tickets.Descripcion" class="form-control"></InputText>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <button type="submit" class="btn btn-success">Crear <i class="bi bi-floppy-fill" /></button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public Tickets Tickets { get; set; } = new Tickets();
+    public List<Tickets> ListTickets { get; set; } = new List<Tickets>();
+    public List<Sistemas> ListSistemas { get; set; } = new List<Sistemas>();
+    public List<Prioridades> ListPrioridades { get; set; } = new List<Prioridades>();
+    public List<Clientes> ListClientes { get; set; } = new List<Clientes>();
+    public int filtrar { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        if (TicketId > 0)
+        {
+            this.Tickets.TicketId = TicketId;
+            await Buscar();
+        }
+        ListTickets = await ticketsService.Listar(t => true);
+        ListSistemas = await sistemasService.Listar(t => true);
+        ListPrioridades = await prioridadesService.Listar(t => true);
+        ListClientes = await clientesService.Listar(t => true);
+        Tickets.Fecha = DateTime.Today;
+    }
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            return;
+        }
+        var guardo = await ticketsService.Guardar(Tickets);
+        if (guardo)
+        {
+            await Volver();
+        }
+    }
+    public async Task<bool> Validar()
+    {
+        var listaTickets = await ticketsService.Listar(t => t.TicketId == Tickets.TicketId);
+        return listaTickets.Any();
+    }
+    public Task Volver()
+    {
+        navigationManager.NavigateTo("/IndexTickets");
+        return Task.CompletedTask;
+    }
+    public async Task Buscar()
+    {
+        var ticketEncontrado = await ticketsService.Buscar(Tickets.TicketId);
+        if (ticketEncontrado != null)
+        {
+            this.Tickets = ticketEncontrado;
+        }
+    }
+}

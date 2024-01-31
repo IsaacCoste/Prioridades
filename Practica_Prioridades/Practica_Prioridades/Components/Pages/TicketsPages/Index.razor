@@ -1,0 +1,81 @@
+﻿@page "/IndexTickets"
+@page "/IndexTickets/{TicketId:int}"
+@inject TicketsService ticketsService
+
+<div class="card">
+    <div class="card-header">
+        <h1 class="mb-3">Index Tickets</h1>
+        <a href="/CreateTickets" class="btn btn-secondary">Crear</a>
+        
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead bgcolor="#92C7CF">
+                    <tr>
+                        <th>TicketId</th>
+                        <th>Fecha</th>
+                        <th>ClienteID</th>
+                        <th>SistemaID</th>
+                        <th>PrioridadID</th>
+                        <th>Solicitado Por</th>
+                        <th>Asunto</th>
+                        <th>Descripción</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ListTickets)
+                    {
+                        <tr>
+                            <td>@item.TicketId</td>
+                            <td>@item.Fecha.ToString("dd-MM-yyyy")</td>
+                            <td>@item.ClienteId</td>
+                            <td>@item.SistemaId</td>
+                            <td>@item.PrioridadId</td>
+                            <td>@item.SolicitadoPor</td>
+                            <td>@item.Asunto</td>
+                            <td>@item.Descripcion</td>
+                            <td>
+                                <a href="/EditTicket/@item.TicketId" class="bi bi-journal-medical" style="font-size: 1.5em;"></a>
+                            </td>
+                            <td>
+                                <a href="/d/@item.TicketId" class="bi bi-trash" style="font-size: 1.5em;"></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+     
+    </div>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public int TicketId { get; set; }
+    public Tickets tickets { get; set; } = new Tickets();
+    public List<Tickets> ListTickets { get; set; } = new List<Tickets>();
+    public int filtrar { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        ListTickets = await ticketsService.Listar(t => true);
+    }
+    public async Task Buscar()
+    {
+        if (filtrar == 0)
+        {
+            ListTickets = await ticketsService.Listar(t => true);
+        }
+        else
+        {
+            ListTickets = await ticketsService.Listar(t => t.TicketId == filtrar);
+        }
+    }
+}

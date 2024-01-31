@@ -1,0 +1,89 @@
+﻿@page "/sistemEdit"
+@page "/sistemEdit/{SistemasId:int}"
+@inject SistemasService sistemasService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Registro de Sistemas</PageTitle>
+
+<EditForm Model="sistemas" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+                        <div class="card-header">
+            <h1>Edit de Sistemas</h1>
+        </div>
+        <div class="card-body">
+            <label>ID:</label>
+            <div class="input-group">
+                <InputNumber min="0" @bind-Value="sistemas.SistemasId" class="id-input"></InputNumber>
+                <button type="button" class="btn btn-primary bi bi-search" @onclick="Buscar"></button>
+            </div>
+            <div class="col-6">
+                <label>Sistema:</label>
+                <InputText @bind-Value="sistemas.SistemaNombre" class="form-control"></InputText>
+                <ValidationMessage For="@(() => sistemas.SistemaNombre)" />
+                @if (HaySistemaNombre)
+                {
+                    <p class="text-danger">Ya existe un Sistema con este nombre.</p>
+                }
+            </div>
+        </div>
+        <div class="card-footer text-lg-center">
+            <button type="submit" class="btn btn-success">Modificar <i class="bi bi-floppy-fill" /></button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+        </div>
+    </div>
+
+</EditForm>
+@code {
+    [Parameter]
+    public int SistemasId { get; set; }
+    public Sistemas sistemas { get; set; } = new Sistemas();
+    private bool HaySistemaNombre = false;
+    public string Notification { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (SistemasId > 0)
+        {
+            this.sistemas.SistemasId = SistemasId;
+            this.Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        var sistemasEncontrado = await sistemasService.Buscar(sistemas.SistemasId);
+        if(sistemasEncontrado != null)
+        {
+            this.sistemas = sistemasEncontrado;
+        }
+    }
+    public async Task<bool> Validar()
+    {
+        var Listasistemas = await sistemasService.Listar(t => t.SistemaNombre!.ToLower() == sistemas.SistemaNombre!.ToLower() && t.SistemasId != sistemas.SistemasId);
+        HaySistemaNombre = Listasistemas.Any();
+        return HaySistemaNombre;
+    }
+    public async Task Guardar()
+    {
+        if(await Validar())
+        {
+            return;
+        }
+        var guardo = await sistemasService.Guardar(sistemas);
+        if(guardo)
+        {
+            Notification = "Se guardo correctamente";
+            Volver();
+        }
+        else
+        {
+            Notification = "No se pudo guardar";
+        }
+    }
+    public void Volver()
+    {
+        NavigationManager.NavigateTo("IndexSistem");
+    }
+}

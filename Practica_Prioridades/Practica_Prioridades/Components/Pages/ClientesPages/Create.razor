@@ -60,7 +60,7 @@
         </div>
         <div class=" card-footer text-center">
             <button type="submit" class="btn btn-success">Crear <i class="bi bi-floppy-fill" /></button>
-            <button type="button" class="btn btn-outline-primary" @onclick="Volver">Volver <i class="bi bi-arrow-return-left" /></button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver" >Volver <i class="bi bi-arrow-return-left" /></button>
         </div>
     </div>
 </EditForm>
@@ -73,7 +73,6 @@
         private bool HayRnc = false;
         public string Notification { get; set; } = string.Empty;
 
-
         protected override void OnInitialized()
         {
             if (ClienteId > 0)
@@ -85,7 +84,6 @@
         public async void Buscar()
         {
             var clienteEncontrado = await clientesService.Buscar(clientes.ClienteId);
-
             if (clienteEncontrado != null)
             {
                 this.clientes = clienteEncontrado;
@@ -93,17 +91,17 @@
         }
         public async Task<bool> Validar()
         {
-            var listaClientes = await clientesService.Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.ToLower() && t.ClienteId != clientes.ClienteId);
+            var listaClientes = await clientesService.
+            Listar(t => t.Nombre!.ToLower() == clientes.Nombre!.
+            ToLower() && t.ClienteId != clientes.ClienteId);
             HayNombre = listaClientes.Any();
 
-            var listaClientesRnc = await clientesService.Listar(t => t.Rnc!.ToLower() == clientes.Rnc!.ToLower() && t.ClienteId != clientes.ClienteId);
+            var listaClientesRnc = await clientesService.
+            Listar(t => t.Rnc!.ToLower() == clientes.Rnc!.
+            ToLower() && t.ClienteId != clientes.ClienteId);
             HayRnc = listaClientesRnc.Any();
 
             return HayNombre || HayRnc;
-        }
-        public void Nuevo()
-        {
-            clientes = new Clientes();
         }
         public async void Guardar()
         {
@@ -114,17 +112,8 @@
             var guardo = await clientesService.Guardar(clientes);
             if(guardo)
             {
-            Nuevo();
             Notification = "Se Guardo los datos correctamente";
-            }
-            
-        }
-        public async void Eliminar()
-        {
-            if (clientes.ClienteId > 0)
-            {
-            await clientesService.Eliminar(clientes);
-                Nuevo();
+            Volver();
             }
         }
         public void Volver(){

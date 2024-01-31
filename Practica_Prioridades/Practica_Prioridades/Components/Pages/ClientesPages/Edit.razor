@@ -73,7 +73,6 @@
     private bool HayRnc = false;
     public string Notification { get; set; } = string.Empty;
 
-
     protected override void OnInitialized()
     {
         if (ClienteId > 0)
@@ -101,7 +100,6 @@
 
         return HayNombre || HayRnc;
     }
-    
     public async void Guardar()
     {
         if (await Validar())
@@ -111,15 +109,8 @@
         var guardo = await clientesService.Guardar(clientes);
         if (guardo)
         {
+            Volver();
             Notification = "Se Guardo los datos correctamente";
-        }
-
-    }
-    public async void Eliminar()
-    {
-        if (clientes.ClienteId > 0)
-        {
-            await clientesService.Eliminar(clientes);
         }
     }
     public void Volver()
